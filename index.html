@@ -72,15 +72,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;ba
 .gsec{margin-bottom:14px;}
 .gscroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .gscroll::-webkit-scrollbar{display:none;}
-.ginner{display:inline-block;min-width:100%;}
-.mrow{position:relative;height:12px;margin-bottom:3px;padding-left:24px;}
+.ginner{display:inline-block;min-width:750px;}
+.grid-col{display:flex;flex-direction:column;overflow:visible;}
+.mrow{position:relative;height:12px;margin-bottom:3px;width:689px;min-width:689px;overflow:visible;}
 .mlbl{position:absolute;font-size:9px;color:#8e8e93;}
 .gouter{display:flex;gap:3px;}
 .dcol{width:22px;flex-shrink:0;}
 .dsp{height:15px;}
 .dlbl{height:11px;line-height:11px;font-size:9px;color:#8e8e93;text-align:right;padding-right:3px;}
 .dgap{height:2px;}
-.grid{display:grid;grid-template-columns:repeat(53,11px);grid-template-rows:repeat(7,11px);gap:2px;flex-shrink:0;}
+.grid{display:grid;grid-template-columns:repeat(53,11px);grid-template-rows:repeat(7,11px);grid-auto-flow:column;gap:2px;flex-shrink:0;}
 .cell{width:11px;height:11px;border-radius:2px;cursor:pointer;background:#e5e5ea;}
 .cell:active{opacity:.6;}
 .legend{display:flex;align-items:center;gap:4px;margin-top:6px;justify-content:flex-end;}
@@ -175,10 +176,12 @@ input:focus,select:focus{outline:2px solid #34c759;border-color:transparent;}
 
   <div class="gsec">
     <div class="gscroll"><div class="ginner">
-      <div class="mrow" id="mrow"></div>
       <div class="gouter">
         <div class="dcol" id="dcol"></div>
-        <div class="grid" id="grid"></div>
+        <div class="grid-col">
+          <div class="mrow" id="mrow"></div>
+          <div class="grid" id="grid"></div>
+        </div>
       </div>
     </div></div>
     <div class="legend" id="legend"></div>
@@ -407,16 +410,16 @@ function buildGrid(){
     grid.appendChild(cell);
   }
   var mr=document.getElementById('mrow');mr.innerHTML='';
-  setTimeout(function(){
-    var gw=document.getElementById('grid').offsetWidth||500,cw=gw/53;
-    MONTHS.forEach(function(m,idx){
-      if(mcols[idx]!==undefined){
-        var l=document.createElement('div');l.className='mlbl';
-        l.textContent=m;l.style.left=(mcols[idx]*cw)+'px';
-        mr.appendChild(l);
-      }
-    });
-  },60);
+  // Use fixed cell size: 11px cell + 2px gap = 13px per column
+  // mrow has padding-left:24px to align with grid (past the day labels)
+  var CW=13;
+  MONTHS.forEach(function(m,idx){
+    if(mcols[idx]!==undefined){
+      var l=document.createElement('div');l.className='mlbl';
+      l.textContent=m;l.style.left=(mcols[idx]*CW)+'px';
+      mr.appendChild(l);
+    }
+  });
 }
 
 function buildLegend(){
